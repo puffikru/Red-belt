@@ -3,4 +3,4 @@ project(Red_belt)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(Red_belt main.cpp)
+add_executable(Red_belt table/table.cpp)

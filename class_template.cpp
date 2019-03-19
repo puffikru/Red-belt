@@ -26,6 +26,11 @@ IteratorRange<typename vector<T>::iterator> Head(vector<T>& v, size_t top) {
     };
 }
 
+template <typename T>
+size_t RangeSize(IteratorRange<T> r) {
+    return r.end() - r.begin();
+}
+
 
 int main() {
     vector<int> v = {1, 2, 3, 4, 5};
@@ -35,9 +40,10 @@ int main() {
     for (int x : v) {
         cout << x << ' ';
     }
+    cout << endl;
+    cout << RangeSize(Head(v, 3));
     return 0;
 }
-
 
 /*struct PairOfStringAndInt {
     string first;
