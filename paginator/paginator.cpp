@@ -18,11 +18,11 @@ public:
     IteratorRange(It begin, It end, size_t page_size)
         : first(begin), last(end), p_size(page_size) {}
 
-    It& begin() {
+    It begin() const {
         return first;
     }
 
-    It& end() {
+    It end() const {
         return last;
     }
 
@@ -37,32 +37,6 @@ private:
 };
 
 
-template<typename C>
-auto Paginate(C& c, size_t page_size) {
-    return IteratorRange{c.begin(), c.end(), page_size};
-/*    cout << "size: " << c.size() << endl;
-
-    auto it = c.begin();
-    size_t p_size = c.size() % page_size > 0 ? c.size() / page_size + 1 : c.size() / page_size;
-
-    cout << "p_size: " << p_size << endl;
-
-
-    for (size_t i = 0; i < p_size; ++i) {
-        for (auto j = 0; j < page_size; ++j) {
-            if (it != c.end()) {
-                ++it;
-            } else {
-                break;
-            }
-        }
-//        result.push_back(Paginator<C>(c.begin(), it, static_cast<size_t>(distance(c.begin(), it))));
-        Paginator{c.begin(), it, static_cast<size_t>(distance(c.begin(), it))};
-    }
-//    return Paginator{c.begin(), it, static_cast<size_t>(distance(c.begin(), it))};
-    return Paginator{c.begin(), it, static_cast<size_t>(distance(c.begin(), it))};*/
-}
-
 
 template<typename Iterator>
 class Paginator {
@@ -72,10 +46,9 @@ public:
     Paginator(const Iterator& begin, const Iterator& end, const size_t& page_size) {
 //        IteratorRange<Iterator> ir{begin, end, page_size};
 //        data.resize(RangeSize(ir));
-//        cout << "it: " << distance(begin, end) << endl;
-//        cout << "page_size: " << page_size << endl;
-//        data.push_back({begin, end, page_size});
-          data.push_back({begin, end, page_size});
+        cout << "it: " << distance(begin, end) << endl;
+        cout << "page_size: " << page_size << endl;
+        data.push_back({begin, end, page_size});
     }
 
     typename vector<IteratorRange<Iterator>>::iterator begin() {
@@ -97,6 +70,32 @@ public:
 private:
     vector<IteratorRange<Iterator>> data;
 };
+
+
+template<typename C>
+auto Paginate(C& c, size_t page_size) {
+    cout << "size: " << c.size() << endl;
+
+    auto it = c.begin();
+    size_t p_size = c.size() % page_size > 0 ? c.size() / page_size + 1 : c.size() / page_size;
+
+    cout << "p_size: " << p_size << endl;
+
+
+    for (size_t i = 0; i < p_size; ++i) {
+        for (auto j = 0; j < page_size; ++j) {
+            if (it != c.end()) {
+                ++it;
+            } else {
+                break;
+            }
+        }
+//        result.push_back(Paginator<C>(c.begin(), it, static_cast<size_t>(distance(c.begin(), it))));
+        Paginator{c.begin(), it, static_cast<size_t>(distance(c.begin(), it))};
+    }
+//    return Paginator{c.begin(), it, static_cast<size_t>(distance(c.begin(), it))};
+    return Paginator{c.begin(), it, static_cast<size_t>(distance(c.begin(), it))};
+}
 
 
 void TestPageCounts() {
