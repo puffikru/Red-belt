@@ -91,7 +91,7 @@ auto Paginate(C& c, size_t page_size) {
             }
         }
 //        result.push_back(Paginator<C>(c.begin(), it, static_cast<size_t>(distance(c.begin(), it))));
-        Paginator{c.begin(), it, static_cast<size_t>(distance(c.begin(), it))};
+//        Paginator{c.begin(), it, static_cast<size_t>(distance(c.begin(), it))};
     }
 //    return Paginator{c.begin(), it, static_cast<size_t>(distance(c.begin(), it))};
     return Paginator{c.begin(), it, static_cast<size_t>(distance(c.begin(), it))};
