@@ -43,43 +43,24 @@ public:
         auto c_size = (size_t) distance(begin, end);
         size_t page_num;
 
-        if (begin == end || c_size == page_size) {
+        if (begin == end || c_size == 0) {
+        }else if (c_size == page_size || c_size < page_size) {
             data.push_back({begin, end});
-            page_num = 1;
-        } else if (c_size > page_size) {
-            page_num = (c_size + page_size - 1) / page_size;
-            auto start = begin;
-            auto finish = start + page_size;
-            auto dist = c_size;
-            for (auto i = 0; i < page_num; ++i) {
-                dist = static_cast<size_t>(distance(finish, end));
-                data.push_back({start, finish});
-                if (dist < page_size) {
-                    start = finish;
-                    finish = end;
-                } else {
-                    start = finish;
-                    finish += page_size;
-                }
-            }
-        } else if(c_size < page_size) {
-            data.push_back({begin, end});
-            page_num = 1;
         } else {
             page_num = (c_size + page_size - 1) / page_size;
+
             auto start = begin;
             auto finish = start + page_size;
-            auto dist = c_size;
-            for (auto i = 0; i < page_num; ++i) {
+            auto dist = (size_t)distance(finish, end);
+            int index = 0;
+
+            data.push_back({start, finish});
+            while (index < page_num - 1) {
+                start = finish;
+                finish = dist < page_size ? end : finish + page_size;
                 dist = static_cast<size_t>(distance(finish, end));
                 data.push_back({start, finish});
-                if (dist < page_size) {
-                    start = finish;
-                    finish = end;
-                } else {
-                    start = finish;
-                    finish += page_size;
-                }
+                ++index;
             }
         }
     }
