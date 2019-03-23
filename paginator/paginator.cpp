@@ -15,8 +15,8 @@ using namespace std;
 template<typename It>
 class IteratorRange {
 public:
-    IteratorRange(It begin, It end, size_t page_size)
-        : first(begin), last(end), p_size(page_size) {}
+    IteratorRange(const It& begin, const It& end)
+        : first(begin), last(end), p_size(static_cast<size_t>(distance(begin, end))) {}
 
     It begin() const {
         return first;
@@ -36,26 +36,59 @@ private:
     size_t p_size;
 };
 
-
-
 template<typename Iterator>
 class Paginator {
 public:
-//    Paginator() {};
+    Paginator(const Iterator& begin, const Iterator& end, size_t page_size) {
+        auto c_size = (size_t) distance(begin, end);
+        size_t page_num;
 
-    Paginator(const Iterator& begin, const Iterator& end, const size_t& page_size) {
-//        IteratorRange<Iterator> ir{begin, end, page_size};
-//        data.resize(RangeSize(ir));
-        cout << "it: " << distance(begin, end) << endl;
-        cout << "page_size: " << page_size << endl;
-        data.push_back({begin, end, page_size});
+        if (begin == end || c_size == page_size) {
+            data.push_back({begin, end});
+            page_num = 1;
+        } else if (c_size > page_size) {
+            page_num = (c_size + page_size - 1) / page_size;
+            auto start = begin;
+            auto finish = start + page_size;
+            auto dist = c_size;
+            for (auto i = 0; i < page_num; ++i) {
+                dist = static_cast<size_t>(distance(finish, end));
+                data.push_back({start, finish});
+                if (dist < page_size) {
+                    start = finish;
+                    finish = end;
+                } else {
+                    start = finish;
+                    finish += page_size;
+                }
+            }
+        } else if(c_size < page_size) {
+            data.push_back({begin, end});
+            page_num = 1;
+        } else {
+            page_num = (c_size + page_size - 1) / page_size;
+            auto start = begin;
+            auto finish = start + page_size;
+            auto dist = c_size;
+            for (auto i = 0; i < page_num; ++i) {
+                dist = static_cast<size_t>(distance(finish, end));
+                data.push_back({start, finish});
+                if (dist < page_size) {
+                    start = finish;
+                    finish = end;
+                } else {
+                    start = finish;
+                    finish += page_size;
+                }
+            }
+        }
     }
 
-    typename vector<IteratorRange<Iterator>>::iterator begin() {
+    auto begin() {
         return data.begin();
     }
 
-    typename vector<IteratorRange<Iterator>>::iterator end() {
+    auto end() {
         return data.end();
     }
 
@@ -63,40 +96,14 @@ public:
         return data.size();
     }
 
-    size_t RangeSize(IteratorRange<Iterator> r) {
-        return r.end() - r.begin();
-    }
-
 private:
     vector<IteratorRange<Iterator>> data;
 };
 
-
 template<typename C>
 auto Paginate(C& c, size_t page_size) {
-    cout << "size: " << c.size() << endl;
-
-    auto it = c.begin();
-    size_t p_size = c.size() % page_size > 0 ? c.size() / page_size + 1 : c.size() / page_size;
-
-    cout << "p_size: " << p_size << endl;
-
-
-    for (size_t i = 0; i < p_size; ++i) {
-        for (auto j = 0; j < page_size; ++j) {
-            if (it != c.end()) {
-                ++it;
-            } else {
-                break;
-            }
-        }
-//        result.push_back(Paginator<C>(c.begin(), it, static_cast<size_t>(distance(c.begin(), it))));
-//        Paginator{c.begin(), it, static_cast<size_t>(distance(c.begin(), it))};
-    }
-//    return Paginator{c.begin(), it, static_cast<size_t>(distance(c.begin(), it))};
-    return Paginator{c.begin(), it, static_cast<size_t>(distance(c.begin(), it))};
+    return Paginator{c.begin(), c.end(), page_size};
 }
-
 
 void TestPageCounts() {
     vector<int> v(15);
@@ -122,7 +129,6 @@ void TestLooping() {
         }
         os << '\n';
     }
-
     ASSERT_EQUAL(os.str(), "1 2 3 4 5 6 \n7 8 9 10 11 12 \n13 14 15 \n");
 }
 
@@ -156,7 +162,7 @@ void TestConstContainer() {
 
     vector<string> pages;
     for (const auto& page : Paginate(letters, 10)) {
-        pages.push_back(string(page.begin(), page.end()));
+        pages.emplace_back(string(page.begin(), page.end()));
     }
 
     const vector<string> expected = {"abcdefghij", "klmnopqrst", "uvwxyz"};
@@ -192,17 +198,9 @@ void TestPagePagination() {
 int main() {
     TestRunner tr;
     RUN_TEST(tr, TestPageCounts);
-//  RUN_TEST(tr, TestLooping);
-//  RUN_TEST(tr, TestModification);
-//  RUN_TEST(tr, TestPageSizes);
-//  RUN_TEST(tr, TestConstContainer);
-//  RUN_TEST(tr, TestPagePagination);
-
-    /*vector<int> v(15);
-
-    cout << v.size() << endl;
-
-    v.push_back(1);
-
-    cout << v.size() << endl;*/
+    RUN_TEST(tr, TestLooping);
+    RUN_TEST(tr, TestModification);
+    RUN_TEST(tr, TestPageSizes);
+    RUN_TEST(tr, TestConstContainer);
+    RUN_TEST(tr, TestPagePagination);
 }
