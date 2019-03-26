@@ -3,4 +3,4 @@ project(Red_belt)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(Red_belt student_sort/student_sort.cpp)
+add_executable(Red_belt leaner/leaner.cpp)
