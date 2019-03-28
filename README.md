@@ -1,11 +1,12 @@
-#include "profile.h"
+#Coursera Red belt
 
-#include <iostream>
-#include <vector>
-#include <fstream>
+Alt-H1
+======
 
-using namespace std;
+Alt-H2
+------
 
+```cpp
 int main() {
     {
         LOG_DURATION("endl");
@@ -27,3 +28,4 @@ int main() {
     }
     return 0;
 }
+```
